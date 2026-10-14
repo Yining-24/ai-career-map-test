@@ -82,7 +82,8 @@ export default function Home(){
     if(!report)return;setBusy(true);setMessage("");
     try{
       const blob=await makeLongImage(report),file=new File([blob],`AI岗位测评-${new Date().toISOString().slice(0,10)}.png`,{type:"image/png"});
-      if(navigator.canShare?.({files:[file]})&&navigator.share)await navigator.share({files:[file],title:"我的AI岗位测评结果"});
+      const isMobile=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+      if(isMobile&&navigator.canShare?.({files:[file]})&&navigator.share)await navigator.share({files:[file],title:"我的AI岗位测评结果"});
       else{const url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=file.name;a.click();setTimeout(()=>URL.revokeObjectURL(url),30000);setMessage("长图已下载。手机上可从下载文件中保存到相册。");}
     }catch(e){if((e as Error).name!=="AbortError")setMessage((e as Error).message);}finally{setBusy(false);}
   }
